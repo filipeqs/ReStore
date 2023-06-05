@@ -6,9 +6,10 @@ public class Basket
     public string BuyerId { get; set; }
     public List<BasketItem> Items { get; set; }
 
-    public Basket()
+    public Basket(string buyerId)
     {
         Items = new();
+        BuyerId = buyerId;
     }
 
     public void AddItem(Product product, int quantity)
