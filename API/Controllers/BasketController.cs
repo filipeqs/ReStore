@@ -98,6 +98,7 @@ public class BasketController : BaseApiController
                 Type = item.Product.Type,
                 Brand = item.Product.Brand,
                 Quantity = item.Quantity,
+                Price = item.Product.Price
             }).ToList()
         };
     }
