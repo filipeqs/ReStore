@@ -14,7 +14,7 @@ public class Basket
 
     public void AddItem(Product product, int quantity)
     {
-        if (!Items.Any(item => item.Id == product.Id))
+        if (!Items.Any(item => item.ProductId == product.Id))
             Items.Add(new BasketItem { Product = product, Quantity = quantity });
         else 
         {
