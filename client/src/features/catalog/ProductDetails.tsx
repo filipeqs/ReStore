@@ -19,7 +19,7 @@ import {
   addBasketItemAsync,
   removeBasketItemAsync,
 } from '../basket/basketSlice';
-import { fetchProducAsync, productSelectors } from './catalogSlice';
+import { fetchProductAsync, productSelectors } from './catalogSlice';
 
 export default function ProductDetails() {
   const { basket, status } = useAppSelector((state) => state.basket);
@@ -35,7 +35,7 @@ export default function ProductDetails() {
   useEffect(() => {
     if (item) setQuantity(item.quantity);
 
-    if (!product && id) dispatch(fetchProducAsync(parseInt(id)));
+    if (!product && id) dispatch(fetchProductAsync(parseInt(id)));
   }, [id, item, product, dispatch]);
 
   function handleInputChange(event: any) {
