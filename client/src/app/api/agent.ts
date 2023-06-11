@@ -85,6 +85,13 @@ const Account = {
   login: (values: any) => requests.post('account/login', values),
   register: (values: any) => requests.post('account/register', values),
   currentUser: () => requests.get('account/currentUser'),
+  fetchAddress: () => requests.get('account/saveAddress'),
+};
+
+const Orders = {
+  list: () => requests.get('orders'),
+  fetch: (id: number) => requests.get(`orders/${id}`),
+  create: (values: any) => requests.post('orders', values),
 };
 
 const TestErrors = {
@@ -99,6 +106,7 @@ const agent = {
   Catalog,
   Basket,
   Account,
+  Orders,
   TestErrors,
 };
 

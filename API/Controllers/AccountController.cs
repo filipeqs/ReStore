@@ -87,6 +87,16 @@ public class AccountController : BaseApiController
         };
     }
 
+    [Authorize]
+    [HttpGet("saveAddress")]
+    public async Task<ActionResult<UserAddress>> GetSavedAddress()
+    {
+        return await _userManager.Users
+            .Where(q => q.UserName == User.Identity.Name)
+            .Select(q => q.Address)
+            .FirstOrDefaultAsync();
+    }
+
     private async Task<Basket> RetrieveBasket(string buyerId)
     {
         if (string.IsNullOrEmpty(buyerId))
