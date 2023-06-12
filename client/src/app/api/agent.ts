@@ -94,6 +94,10 @@ const Orders = {
   create: (values: any) => requests.post('orders', values),
 };
 
+const Payments = {
+  createPaymentIntent: () => requests.post('payments', {}),
+};
+
 const TestErrors = {
   get400Error: () => requests.get('buggy/bad-request'),
   get401Error: () => requests.get('buggy/unauthorized'),
@@ -107,6 +111,7 @@ const agent = {
   Basket,
   Account,
   Orders,
+  Payments,
   TestErrors,
 };
 
