@@ -9,13 +9,13 @@ interface Props {
 }
 
 export default function ProductList({ products }: Props) {
-  const { productLoaded } = useAppSelector((state) => state.catalog);
+  const { productsLoaded } = useAppSelector((state) => state.catalog);
 
   return (
     <Grid container spacing={4}>
       {products.map((product: any) => (
         <Grid item xs={4} key={product.id}>
-          {!productLoaded ? (
+          {!productsLoaded ? (
             <ProductCardSkeleton />
           ) : (
             <ProductCard product={product} />
