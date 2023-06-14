@@ -1,8 +1,10 @@
-using System.Text.Json;
 using API.Data;
+using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.RequestHelpers;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +13,12 @@ namespace API.Controllers;
 public class ProductsController : BaseApiController
 {
     private readonly StoreContext _context;
+    private readonly IMapper _mapper;
 
-    public ProductsController(StoreContext context)
+    public ProductsController(StoreContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -35,7 +39,7 @@ public class ProductsController : BaseApiController
         return Ok(products);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetProduct")]
     public async Task<ActionResult<Product>> GetProduct(int id)
     {
         var product = await _context.Products.FindAsync(id);
@@ -52,5 +56,20 @@ public class ProductsController : BaseApiController
         var types = await _context.Products.Select(p => p.Type).Distinct().ToListAsync();
 
         return Ok(new { brands, types });
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<ActionResult<Product>> CreateProduct(CreateProductDto productdto)
+    {
+        var product = _mapper.Map<Product>(productdto);
+        _context.Products.Add(product);
+
+        var result = await _context.SaveChangesAsync() > 0;
+
+        if (result is false)
+            return BadRequest(new ProblemDetails{ Title = "Problem creating a new product" });
+
+        return CreatedAtRoute("GetProduct", new { id = product.Id }, product);
     }
 }
