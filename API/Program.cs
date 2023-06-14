@@ -86,6 +86,9 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseCors(opt => 
 {
     opt.AllowAnyHeader()
@@ -98,6 +101,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapFallbackToController("Index", "Fallback");
 
 var scope = app.Services.CreateAsyncScope();
 var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
