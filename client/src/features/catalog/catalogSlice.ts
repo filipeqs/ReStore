@@ -9,7 +9,7 @@ import { RootState } from '../../app/store/configureStore';
 import { MetaData } from '../../app/models/pagination';
 
 interface CatalogState {
-  productLoaded: boolean;
+  productsLoaded: boolean;
   filtersLoaded: boolean;
   status: string;
   brands: string[];
@@ -85,7 +85,7 @@ function initParams() {
 export const catalogSlice = createSlice({
   name: 'catalog',
   initialState: productAdapter.getInitialState<CatalogState>({
-    productLoaded: false,
+    productsLoaded: false,
     filtersLoaded: false,
     status: 'idle',
     brands: [],
@@ -95,7 +95,7 @@ export const catalogSlice = createSlice({
   }),
   reducers: {
     setProductParams: (state, action) => {
-      state.productLoaded = false;
+      state.productsLoaded = false;
       state.productParams = {
         ...state.productParams,
         ...action.payload,
@@ -103,17 +103,22 @@ export const catalogSlice = createSlice({
       };
     },
     setPageNumber: (state, action) => {
-      state.productLoaded = false;
-      state.productParams = {
-        ...state.productParams,
-        ...action.payload,
-      };
+      state.productsLoaded = false;
+      state.productParams = { ...state.productParams, ...action.payload };
     },
     setMetaData: (state, action) => {
       state.metaData = action.payload;
     },
     resetProductParams: (state) => {
       state.productParams = initParams();
+    },
+    setProduct: (state, action) => {
+      productAdapter.upsertOne(state, action.payload);
+      state.productsLoaded = false;
+    },
+    removeProduct: (state, action) => {
+      productAdapter.removeOne(state, action.payload);
+      state.productsLoaded = false;
     },
   },
   extraReducers: (builder) => {
@@ -123,7 +128,7 @@ export const catalogSlice = createSlice({
     builder.addCase(fetchProductsAsync.fulfilled, (state, action) => {
       productAdapter.setAll(state, action.payload);
       state.status = 'idle';
-      state.productLoaded = true;
+      state.productsLoaded = true;
     });
     builder.addCase(fetchProductsAsync.rejected, (state, action) => {
       state.status = 'idle';
@@ -165,4 +170,6 @@ export const {
   resetProductParams,
   setMetaData,
   setPageNumber,
+  setProduct,
+  removeProduct,
 } = catalogSlice.actions;

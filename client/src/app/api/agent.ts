@@ -48,6 +48,9 @@ axios.interceptors.response.use(
       case 401:
         toast.error(data.title || 'Unauthorized');
         break;
+      case 403:
+        toast.error('You are not alowwed to do that!');
+        break;
       case 500:
         router.navigate('/server-error', { state: { error: data } });
         break;
@@ -59,12 +62,32 @@ axios.interceptors.response.use(
   }
 );
 
+function createFormData(item: any) {
+  let formData = new FormData();
+  for (const key in item) {
+    formData.append(key, item[key]);
+  }
+  return formData;
+}
+
 const requests = {
   get: (url: string, params?: URLSearchParams) =>
     axios.get(url, { params }).then(responseBody),
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
   delete: (url: string) => axios.delete(url).then(responseBody),
+  postForm: (url: string, data: FormData) =>
+    axios
+      .post(url, data, {
+        headers: { 'Content-type': 'multipart/form-data' },
+      })
+      .then(responseBody),
+  putForm: (url: string, data: FormData) =>
+    axios
+      .put(url, data, {
+        headers: { 'Content-type': 'multipart/form-data' },
+      })
+      .then(responseBody),
 };
 
 const Catalog = {
@@ -98,6 +121,14 @@ const Payments = {
   createPaymentIntent: () => requests.post('payments', {}),
 };
 
+const Admin = {
+  createProduct: (product: any) =>
+    requests.postForm('products', createFormData(product)),
+  updateProduct: (product: any) =>
+    requests.putForm('products', createFormData(product)),
+  deleteProduct: (id: number) => requests.delete(`products/${id}`),
+};
+
 const TestErrors = {
   get400Error: () => requests.get('buggy/bad-request'),
   get401Error: () => requests.get('buggy/unauthorized'),
@@ -112,6 +143,7 @@ const agent = {
   Account,
   Orders,
   Payments,
+  Admin,
   TestErrors,
 };
 
